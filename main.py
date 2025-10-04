@@ -6,6 +6,7 @@ import os
 import wandb
 import hydra
 from omegaconf import DictConfig
+from hydra.utils import to_absolute_path
 
 _steps = [
     "download",
@@ -50,6 +51,7 @@ def go(config: DictConfig):
                 },
             )
 
+        # basic_cleaning
         if "basic_cleaning" in active_steps:
             _ = mlflow.run(
         os.path.join(to_absolute_path("src"), "basic_cleaning"),
@@ -62,9 +64,10 @@ def go(config: DictConfig):
             "min_price": config["etl"]["min_price"],
             "max_price": config["etl"]["max_price"],
         },
-        env_manager="local",  # avoids conda prompts; uses your current venv
+        env_manager="local",   # keeps everything in your current venv
     )
 
+# data_check
         if "data_check" in active_steps:
             _ = mlflow.run(
         os.path.join(to_absolute_path("src"), "data_check"),
