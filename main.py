@@ -64,7 +64,7 @@ def go(config: DictConfig):
             "min_price": config["etl"]["min_price"],
             "max_price": config["etl"]["max_price"],
         },
-        env_manager="local",   # keeps everything in your current venv
+        env_manager="local",
     )
 
 # data_check
