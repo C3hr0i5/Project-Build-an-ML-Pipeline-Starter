@@ -108,7 +108,7 @@ def go(config: DictConfig):
                 env_manager="local",
             )
 
-        # (optional) test_regression_model
+        # test_regression_model
         if "test_regression_model" in active_steps:
             _ = mlflow.run(
                 os.path.join(to_absolute_path("src"), "test_regression_model"),
@@ -116,7 +116,7 @@ def go(config: DictConfig):
                 parameters={
                     "model_export": "random_forest_export:prod",
                     "test_data": "data_test.csv:latest",
-                    "target": config["modeling"]["target"],
+                    "target": "price",
                 },
                 env_manager="local",
             )
