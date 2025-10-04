@@ -122,7 +122,7 @@ def go(config: DictConfig):
                 "main",
                 parameters={
                     "model_export": "random_forest_export:prod",
-                    "test_data": "data_test.csv:latest",
+                    "test_data": "test_data.csv:latest",
                     "target": "price",  # or config["modeling"]["target"] if you add it
             },
             env_manager="local",
