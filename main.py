@@ -12,7 +12,7 @@ _steps = [
     "data_check",
     "data_split",
     "train_random_forest",
-    # "test_regression_model",  # run explicitly when ready
+    "test_regression_model",
 ]
 
 @hydra.main(version_base=None, config_name="config", config_path=".")
