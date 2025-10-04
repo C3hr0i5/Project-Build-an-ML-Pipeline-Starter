@@ -15,7 +15,7 @@ _steps = [
     # "test_regression_model",  # run explicitly when ready
 ]
 
-@hydra.main(version_base=None, config_name="config")
+@hydra.main(version_base=None, config_name="config", config_path=".")
 def go(config: DictConfig):
     # Group runs in W&B
     os.environ["WANDB_PROJECT"] = config["main"]["project_name"]
