@@ -51,7 +51,7 @@ def go(config: DictConfig):
             )
 
         if "basic_cleaning" in active_steps:
-    _ = mlflow.run(
+            _ = mlflow.run(
         os.path.join(to_absolute_path("src"), "basic_cleaning"),
         "main",
         parameters={
@@ -66,7 +66,7 @@ def go(config: DictConfig):
     )
 
         if "data_check" in active_steps:
-    _ = mlflow.run(
+            _ = mlflow.run(
         os.path.join(to_absolute_path("src"), "data_check"),
         "main",
         parameters={
