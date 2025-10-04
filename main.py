@@ -85,7 +85,7 @@ def go(config: DictConfig):
             "random_seed": config["modeling"]["random_seed"],
             "stratify_by": config["modeling"]["stratify_by"],   
         },
-        env_manager="local",
+        env_manager="conda",
     )
 
         # --- train_random_forest ---
