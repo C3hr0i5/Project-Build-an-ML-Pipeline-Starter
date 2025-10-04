@@ -3,6 +3,7 @@ import mlflow
 import tempfile
 import os
 import hydra
+import shutil
 from omegaconf import DictConfig
 from hydra.utils import to_absolute_path
 
@@ -110,16 +111,22 @@ def go(config: DictConfig):
 
         # test_regression_model
         if "test_regression_model" in active_steps:
+            src_test = os.path.join(to_absolute_path("src"), "test_regression_model")
+            test_proj = os.path.join(tmp_dir, "test_regression_model")
+            shutil.copytree(src_test, test_proj)
+
+    # prevent MLflow from probing git on this local subproject
+            os.environ["MLFLOW_ENABLE_GIT_TRACKING"] = "false"
             _ = mlflow.run(
-                os.path.join(to_absolute_path("src"), "test_regression_model"),
+                test_proj,
                 "main",
                 parameters={
                     "model_export": "random_forest_export:prod",
                     "test_data": "data_test.csv:latest",
-                    "target": "price",
-                },
-                env_manager="local",
-            )
+                    "target": "price",  # or config["modeling"]["target"] if you add it
+            },
+            env_manager="local",
+        )
 
 if __name__ == "__main__":
     go()
