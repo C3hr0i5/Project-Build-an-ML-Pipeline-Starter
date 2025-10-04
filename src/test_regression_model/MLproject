@@ -1,0 +1,14 @@
+name: test_regression_model
+conda_env: conda.yml
+
+entry_points:
+  main:
+    parameters:
+      model_export: {type: str}   # e.g., random_forest_export:prod
+      test_data:    {type: str}   # e.g., data_test.csv:latest
+      target:       {type: str}   # usually "price"
+    command: >
+      python run.py
+      --model_export {model_export}
+      --test_data {test_data}
+      --target {target}
