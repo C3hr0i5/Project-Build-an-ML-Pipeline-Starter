@@ -1,10 +1,10 @@
 import json
-
 import mlflow
 import tempfile
 import os
 import wandb
 import hydra
+import mlflow.sklearn
 from omegaconf import DictConfig
 from hydra.utils import to_absolute_path
 
@@ -53,7 +53,7 @@ def go(config: DictConfig):
 
         # basic_cleaning
         if "basic_cleaning" in active_steps:
-            _ = mlflow.run(
+         _ = mlflow.run(
         os.path.join(to_absolute_path("src"), "basic_cleaning"),
         "main",
         parameters={
@@ -83,7 +83,7 @@ def go(config: DictConfig):
     )
 
         if "data_split" in active_steps:
-            _ = mlflow.run(
+         _ = mlflow.run(
         f"{config['main']['components_repository']}/train_val_test_split",
         "main",
         parameters={
@@ -97,7 +97,7 @@ def go(config: DictConfig):
     )
 
         if "train_random_forest" in active_steps:
-            rf_config = os.path.abspath("rf_config.json")
+         rf_config = os.path.abspath("rf_config.json")
     with open(rf_config, "w+") as fp:
         json.dump(dict(config["modeling"]["random_forest"].items()), fp)
 
@@ -106,9 +106,12 @@ def go(config: DictConfig):
         "main",
         parameters={
             "rf_config": rf_config,
-            "train_data": "data_train.csv:latest",
-            "val_data": "data_val.csv:latest",
-            "target": config["modeling"]["target"],   
+            "trainval_artifact": "trainval_data.csv:latest",
+            "val_size": config["modeling"]["val_size"],
+            "random_seed": config["modeling"]["random_seed"],
+            "stratify_by": config["modeling"]["stratify"],
+            "max_tfidf_features": config["modeling"].get("max_tfidf_features", 10),
+            "output_artifact": "random_forest_export",
         },
         env_manager="local",
     )
@@ -118,11 +121,8 @@ if "test_regression_model" in active_steps:
         os.path.join(to_absolute_path("src"), "test_regression_model"),
         "main",
         parameters={
-            # Uses the model artifact you promoted to "prod"
-            "model_export": "model_export:prod",
-            # Hold-out split produced by data_split
+            "model_export": "random_forest_export:prod", 
             "test_data": "data_test.csv:latest",
-            # Same target you used during training
             "target": config["modeling"]["target"],
         },
         env_manager="local",
