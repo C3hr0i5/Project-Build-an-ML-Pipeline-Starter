@@ -76,41 +76,41 @@ def go(config: DictConfig):
         # -------- data_split -------
         if "data_split" in active_steps:
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/train_val_test_split",
-                "main",
-                parameters={
-                    "input_artifact": "clean_sample.csv:latest",
-                    "artifact_root": "data",
-                    "test_size": config["modeling"]["test_size"],
-                    "random_seed": config["modeling"]["random_seed"],
-                    "stratify": config["modeling"]["stratify"],  # "" if none
-                },
-                env_manager="local",
-            )
+        f"{config['main']['components_repository']}/train_val_test_split",
+        "main",
+        parameters={
+            "input_artifact": "clean_sample.csv:latest",
+            "artifact_root": "data",
+            "test_size":  config["modeling"]["test_size"],
+            "random_seed": config["modeling"]["random_seed"],
+            "stratify":   config["modeling"]["stratify_by"],  
+        },
+        env_manager="local",
+    )
 
         # --- train_random_forest ---
         if "train_random_forest" in active_steps:
             rf_config = os.path.abspath("rf_config.json")
-            with open(rf_config, "w+") as fp:
-                json.dump(dict(config["modeling"]["random_forest"].items()), fp)
+    with open(rf_config, "w+") as fp:
+        json.dump(dict(config["modeling"]["random_forest"].items()), fp)
 
-            _ = mlflow.run(
-                os.path.join(to_absolute_path("src"), "train_random_forest"),
-                "main",
-                parameters={
-                    "rf_config": rf_config,
-                    "trainval_artifact": "trainval_data.csv:latest",
-                    "val_size": config["modeling"]["val_size"],
-                    "random_seed": config["modeling"]["random_seed"],
-                    "stratify_by": config["modeling"]["stratify"],  
-                    "max_tfidf_features": config["modeling"].get("max_tfidf_features", 10),
-                    "output_artifact": "random_forest_export",
-                },
-                env_manager="local",
-            )
+    _ = mlflow.run(
+        os.path.join(to_absolute_path("src"), "train_random_forest"),
+        "main",
+        parameters={
+            "rf_config": rf_config,
+            "trainval_artifact": "trainval_data.csv:latest",
+            "val_size":   config["modeling"]["val_size"],
+            "random_seed":config["modeling"]["random_seed"],
+            "stratify_by":config["modeling"]["stratify_by"],  
+            "max_tfidf_features": config["modeling"]["max_tfidf_features"],
+            "output_artifact": "random_forest_export",
+        },
+        env_manager="local",
+    )
 
         # (optional) test_regression_model
-        if "test_regression_model" in active_steps:
+    if "test_regression_model" in active_steps:
             _ = mlflow.run(
                 os.path.join(to_absolute_path("src"), "test_regression_model"),
                 "main",
