@@ -94,8 +94,14 @@ def go(config: DictConfig):
             with open(rf_config, "w+") as fp:
                 json.dump(dict(config["modeling"]["random_forest"].items()), fp)
 
+            src_train = os.path.join(to_absolute_path("src"), "train_random_forest")
+            train_proj = os.path.join(tmp_dir, "train_random_forest")
+            shutil.copytree(src_train, train_proj)
+            os.environ["MLFLOW_ENABLE_GIT_TRACKING"] = "false"
+
+
             _ = mlflow.run(
-                os.path.join(to_absolute_path("src"), "train_random_forest"),
+                train_proj,
                 "main",
                 parameters={
                     "rf_config": rf_config,
