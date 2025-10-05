@@ -1,10 +1,52 @@
-# Build an ML Pipeline for Short-Term Rental Prices in NYC
+﻿# Build an ML Pipeline for Short-Term Rental Prices in NYC
 You are working for a property management company renting rooms and properties for short periods of 
 time on various rental platforms. You need to estimate the typical price for a given property based 
 on the price of similar properties. Your company receives new data in bulk every week. The model needs 
 to be retrained with the same cadence, necessitating an end-to-end pipeline that can be reused.
 
 In this project you will build such a pipeline.
+
+## Submission Links
+- **W&B Project (public):** https://wandb.ai/chrisespin15-western-governors-university/nyc_airbnb
+- **GitHub Repository:** https://github.com/C3hr0i5/Project-Build-an-ML-Pipeline-Starter
+
+## Releases
+
+### v1.0.0 (baseline)
+- Initial pipeline release (download → basic_cleaning → data_check → data_split → train_random_forest → test_regression_model).
+- Known behavior: running on `sample2.csv` fails the **proper boundaries** test (expected).
+
+Run:
+-```bash
+mlflow run https://github.com/C3hr0i5/Project-Build-an-ML-Pipeline-Starter \
+  -v 1.0.0 \
+  -P "hydra_options=etl.sample='sample2.csv'"
+
+
+
+### Results & Artifacts
+
+Validation (typical run): MAE ≈ 34.13, R² ≈ 0.552
+
+Test (hold-out): MAE ≈ 33.85, RMSE ≈ 47.31, R² ≈ 0.564 → comparable to validation (no overfitting)
+
+Artifacts in W&B
+
+raw_data / sample.csv
+
+clean_sample / clean_sample.csv (latest also tagged reference)
+
+TRAINVAL_DATA / trainval_data.csv
+
+TEST_DATA / test_data.csv
+
+MODEL_EXPORT / random_forest_export (best run tagged prod)
+
+Lineage / Graph View: W&B → Artifacts → random_forest_export → Lineage
+
+Hyperparameter Search (Hydra multi-run)
+
+We swept max_depth ∈ {10,30,50} × n_estimators ∈ {100,200} (6 runs):
 
 ## Table of contents
 
